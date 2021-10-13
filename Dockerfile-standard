@@ -1,0 +1,19 @@
+FROM python:3.8-buster
+WORKDIR /code
+# Don't run as root.
+RUN groupadd -r mitm \
+    && useradd -m -d /home/mitm -s /bin/bash -g mitm mitm
+
+RUN wget -q https://snapshots.mitmproxy.org/6.0.2/mitmproxy-6.0.2-linux.tar.gz -O mitmproxy.tar.gz \
+    && tar xvf mitmproxy.tar.gz \
+    && mv mitmdump mitmproxy mitmweb /bin \
+    && rm mitmproxy.tar.gz
+
+#ADD mitmproxy_certificates /root/.mitmproxy
+ADD usetech.com.pem /home/mitm/.mitmproxy
+
+# Add your other files here and install your Python packages.
+# This depends on `certifi`.
+
+#RUN chown baphomet:baphomet `python -c "import certifi; print(certifi.where())"`
+USER mitm
